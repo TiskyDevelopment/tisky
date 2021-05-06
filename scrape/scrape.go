@@ -45,6 +45,7 @@ func Handle() {
 			towrite += fmt.Sprintf("\n======== SOURCE: %v ========\n%v\n\n", result, contentOfPaste)
 		}
 	}
+	/* If user wants to output in a file what has scraped.*/
 	if *output != "" {
 		file, err := os.Open(*output)
 		if err != nil {
@@ -53,24 +54,29 @@ func Handle() {
 				errs.PrRed("[ ! ] There was an error creating that file.")
 			}
 		}
+		/* Writes what has scraped. */
 		file.Write([]byte(towrite))
 		defer file.Close()
 
 	}
+	/* Outputs what has been scraped. */
 	fmt.Println(towrite)
 
 }
 
 /* Fetches the arguments returned from the search. */
 func Search(website string, content string) []string {
-	/* Overwrites the website since it can only work with pastebin.com. */
+	/* Makes the content compatible with the google search API. */
 	content = strings.Replace(content, " ", "+", -1)
+	/* The API below is not mine, it is a random one from repl.it.*/
 	link := fmt.Sprintf("https://apis.explosionscratc.repl.co/google?q=site:%s+%s", website, content)
+	/* Read the API and outputs an array with all the links. */
 	resp := Request(link)
 	var arr []string
 	var p fastjson.Parser
 	v, _ := p.Parse(resp)
 	for _, m := range v.GetArray() {
+		/* Gets the link from json. */
 		link := string(m.GetStringBytes("link"))
 		arr = append(arr, link)
 		fmt.Printf("%v[ + ] Found %v %v\n", colors.Green, link, colors.White)
