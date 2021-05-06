@@ -18,12 +18,13 @@ func Handle() {
 	  Warn about using a VPN.
 	  TODO: Add proxies.
 	*/
+	colors.PrintYellow("[ ! ] Scrape doesn't support proxies yet. We highly suggest using a VPN.")
+	/* Creates a new flag set called scrape. */
 	scrapeCmd := flag.NewFlagSet("scrape", flag.ExitOnError)
 	/* Command-line variables. */
 	website := scrapeCmd.String("website", "pastebin.com", "only works with pastebin")
 	content := scrapeCmd.String("content", "", "what to look for")
 	output := scrapeCmd.String("output", "", "output the content to a file")
-	colors.PrintYellow("[ ! ] Scrape doesn't support proxies yet. We highly suggest using a VPN.")
 	/* Get subcommand's args. */
 	args := os.Args[2:]
 	/* Exit if not enough arguments. */
@@ -73,6 +74,10 @@ func Search(website string, content string) []string {
 	link := fmt.Sprintf("https://apis.explosionscratc.repl.co/google?q=site:%s+%s", website, content)
 	/* Read the API and outputs an array with all the links. */
 	resp := Request(link)
+	if strings.Contains(resp, "only") {
+		errs.PrRed("[ ! ] You got ratelimited from the API for 15 minutes.")
+	}
+
 	var arr []string
 	var p fastjson.Parser
 	v, _ := p.Parse(resp)
