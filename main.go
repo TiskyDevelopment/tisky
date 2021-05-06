@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"tisky/covid"
 	"tisky/errs"
+	"tisky/scrape"
 )
 
 func main() {
@@ -15,13 +17,16 @@ func main() {
 
 	*/
 	if len(os.Args) < 2 {
-		errs.NotEnoughArgs()
+		fmt.Println("tisky\ntisky covid -help")
+		os.Exit(0)
 	}
 
 	/* Handle the subcommands. */
 	switch os.Args[1] {
 	case "covid":
 		covid.Handle()
+	case "scrape":
+		scrape.Handle()
 	default:
 		errs.CommandNotFound()
 		os.Exit(0)

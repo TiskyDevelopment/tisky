@@ -24,15 +24,14 @@ func Handle() {
 	args := os.Args[2:]
 	/* Check if subcommand's args exist. */
 	if len(args) < 1 {
-		errs.NotEnoughArgs()
+		covidCmd.Usage()
+		os.Exit(0)
 	}
-	/* Parse the subcommand and checks for error. */
-	if err := covidCmd.Parse(args); err != nil {
-		errs.BadUsage("tisky covid -country=us -days=3")
-	}
-	/* Check if days is equal to 0/- numbers. */
-	if *lastDays <= 0 {
-		errs.PrRed("[ ! ] Days variable cannot be lower then 1.")
+	/* Parses the subcommand. */
+	covidCmd.Parse(args)
+	/* Check if days number is between 1 and 400. */
+	if *lastDays <= 0 || *lastDays > 400 {
+		errs.PrRed("[ ! ] Days variable can only be between 1 and 400.")
 	}
 	/* Check if country code was declared. */
 	if *countryCode == "" {
@@ -42,7 +41,7 @@ func Handle() {
 	body := Request(*countryCode)
 	/* Check if the country code is valid. */
 	if strings.Contains(body, "provide a valid") {
-		errs.PrRed("[ ! ] Invalid country code.")
+		errs.BadUsage("tisky covid -country us -days 9")
 	}
 	/* Define JSON parser and parse the response */
 	var p fastjson.Parser
