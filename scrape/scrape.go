@@ -42,11 +42,12 @@ func Handle() {
 		contentOfPaste := ReadContent(result)
 		fmt.Println(contentOfPaste)
 		if *output != "" {
-			towrite += fmt.Sprintf("\n======== SOURCE: %v ========\n%v\n\n", result, contentOfPaste)
+			towrite += fmt.Sprintf("\n======== SOURCE: %v ========\n\n%v\n", result, contentOfPaste)
 		}
 	}
 	/* If user wants to output in a file what has scraped.*/
 	if *output != "" {
+		os.Remove(*output)
 		file, err := os.Open(*output)
 		if err != nil {
 			file, err = os.Create(*output)
